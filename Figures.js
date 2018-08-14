@@ -141,7 +141,7 @@ function createShader(gl, str, type)
 }
 
 function draw(gl, obj) 
-{
+{   
     // set the shader to use
     gl.useProgram(shaderProgram);
 
@@ -170,22 +170,55 @@ function draw(gl, obj)
     gl.drawArrays(obj.primtype, 0, obj.nVerts);
 }
 
-// TO DO: Create functions needed to generate the vertex data for the different figures.
+class Shape {
+    constructor(gl, verts, primtype) {
+        var vertexBuffer;
+        vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+
+        this.buffer = vertexBuffer;
+        this.vertSize = 3;
+        this.nVerts = verts.length/3.0;
+        this.primtype = primtype;
+    }
+}
+
 function createSquare(gl) 
 {
-    var square = {};
+    let verts = [
+        .5,  .5,  0.0,
+        -.5,  .5,  0.0,
+        .5, -.5,  0.0,
+        -.5, -.5,  0.0
+    ];
+
+    let square = new Shape(gl, verts, gl.TRIANGLE_STRIP)
     return square;
 }
 
 function createTriangle(gl)
 {
-    var triangle = {};
+    let verts = [
+        0.0, 0.5, 0.0,
+        .5, -.5,  0.0,
+        -.5, -.5,  0.0
+    ];
+
+    let triangle = new Shape(gl, verts, gl.TRIANGLES)
     return triangle;
 }
 
 function createRhombus(gl)
 {
-    var rhombus = {};
+    var verts = [
+        0.5,  0,  0.0,
+        0,  .5,  0.0,
+        0, -.5,  0.0,
+        -0.5, 0,  0.0
+    ];
+    let rhombus = new Shape(gl, verts, gl.TRIANGLE_STRIP)
     return rhombus;
 }
 
