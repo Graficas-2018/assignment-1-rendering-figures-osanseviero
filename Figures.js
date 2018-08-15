@@ -1,22 +1,22 @@
 // ModelView Matrix: defines where the square is positioned in the 3D coordinate system relative to the camera
-// Projection Matrix: required by the shader to convert the 3D space into the 2D space of the viewport. 
+// Projection Matrix: required by the shader to convert the 3D space into the 2D space of the viewport.
 var projectionMatrix, modelViewMatrix;
 
 // Attributes: Input variables used in the vertex shader. Since the vertex shader is called on each vertex, these will be different every time the vertex shader is invoked.
 // Uniforms: Input variables for both the vertex and fragment shaders. These are constant during a rendering cycle, such as lights position.
 // Varyings: Used for passing data from the vertex shader to the fragment shader.
 var vertexShaderSource =
-    
+
     "    attribute vec3 vertexPos;\n" +
     "    uniform mat4 modelViewMatrix;\n" +
     "    uniform mat4 projectionMatrix;\n" +
     "    void main(void) {\n" +
-    "		// Return the transformed and projected vertex value\n" +
+    "        // Return the transformed and projected vertex value\n" +
     "        gl_Position = projectionMatrix * modelViewMatrix * \n" +
     "            vec4(vertexPos, 1.0);\n" +
     "    }\n";
 
-var fragmentShaderSource = 
+var fragmentShaderSource =
     "    void main(void) {\n" +
     "    // Return the pixel color: always output white\n" +
     "    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n" +
@@ -25,42 +25,36 @@ var fragmentShaderSource =
 var shaderProgram, shaderVertexPositionAttribute, shaderProjectionMatrixUniform, shaderModelViewMatrixUniform;
 
 // Initializes the context for use with WebGL
-function initWebGL(canvas) 
-{
+function initWebGL(canvas) {
 
     var gl = null;
     var msg = "Your browser does not support WebGL, or it is not enabled by default.";
 
-    try 
-    {
+    try {
         // The getContext method can take one of the following context id strings:
         // "2d" for a 2d canvas context, "webgl" for a WebGL context, or "experimental-webgl" to get a xontext for earlier-version browsers.
         // Use of "experimental-webgl" is recommended to get a context for all WebGL capable browsers.
         gl = canvas.getContext("experimental-webgl");
-    } 
-    catch (e)
-    {
+    }
+    catch (e) {
         msg = "Error creating WebGL Context!: " + e.toString();
     }
 
-    if (!gl)
-    {
+    if (!gl) {
         alert(msg);
         throw new Error(msg);
     }
 
-    return gl;        
+    return gl;    
 }
 
-// The viewport is the rectangular bounds of where to draw. 
+// The viewport is the rectangular bounds of where to draw.
 // In this case, the viewport will take up the entire contents of the canvas' display area.
-function initViewport(gl, canvas)
-{
+function initViewport(gl, canvas) {
     gl.viewport(0, 0, canvas.width, canvas.height);
 }
 
-function initShader(gl)
-{
+function initShader(gl) {
     // load and compile the fragment and vertex shader
     var fragmentShader = createShader(gl, fragmentShaderSource, "fragment");
     var vertexShader = createShader(gl, vertexShaderSource, "vertex");
@@ -77,20 +71,19 @@ function initShader(gl)
     // name     A domString specifying the name of the attribute variable whose location to get
     shaderVertexPositionAttribute = gl.getAttribLocation(shaderProgram, "vertexPos");
     gl.enableVertexAttribArray(shaderVertexPositionAttribute);
-    
+
     // gl.getUniformLocation(program, name);
     // program  A webgl program containing the attribute variable
     // name     A domString specifying the name of the uniform variable whose location to get
     shaderProjectionMatrixUniform = gl.getUniformLocation(shaderProgram, "projectionMatrix");
     shaderModelViewMatrixUniform = gl.getUniformLocation(shaderProgram, "modelViewMatrix");
-    
+
     if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
         alert("Could not initialise shaders");
     }
 }
 
-function initGL(gl, canvas)
-{
+function initGL(gl, canvas) {
     // clear the background (with black)
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -101,9 +94,9 @@ function initGL(gl, canvas)
     // Create a model view matrix with object at 0, 0, -3.333
     modelViewMatrix = mat4.create();
     // translate(out, a, v) → {mat4}
-    // out	mat4	the receiving matrix
-    // a	mat4	the matrix to translate
-    // v	vec3	vector to translate by
+    // out  mat4    the receiving matrix
+    // a    mat4    the matrix to translate
+    // v    vec3    vector to translate by
     mat4.identity(modelViewMatrix);
 
     // Create a project matrix with 45 degree field of view
@@ -118,8 +111,7 @@ function initGL(gl, canvas)
 }
 
 // Helper function that uses WebGL methods to compile the vertex and fragments shaders from a source.
-function createShader(gl, str, type)
-{
+function createShader(gl, str, type) {
     var shader;
     if (type == "fragment") {
         shader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -140,8 +132,7 @@ function createShader(gl, str, type)
     return shader;
 }
 
-function draw(gl, obj) 
-{   
+function draw(gl, obj) {
     // set the shader to use
     gl.useProgram(shaderProgram);
 
@@ -159,7 +150,7 @@ function draw(gl, obj)
     // offset: A GLintptr specifying an offset in bytes of the first component in the vertex attribute array
     gl.vertexAttribPointer(shaderVertexPositionAttribute, obj.vertSize, gl.FLOAT, false, 0, 0);
 
-    // WebGLRenderingContext.uniformMatrix4fv(location, transpose, value); 
+    // WebGLRenderingContext.uniformMatrix4fv(location, transpose, value);
     // location: A WebGLUniformLocation object containing the location of the uniform attribute to modify. The location is obtained using getAttribLocation().
     // transpose: A GLboolean specifying whether to transpose the matrix.
     // value: A Float32Array or sequence of GLfloat values.
@@ -170,7 +161,14 @@ function draw(gl, obj)
     gl.drawArrays(obj.primtype, 0, obj.nVerts);
 }
 
+/** Class representing a shape. */
 class Shape {
+    /**
+     * Create a shape
+     * @param {WebGL context} gl - The WebGL context.
+     * @param {Array} verts - Array of (x, y, z) values with the vertices of the shape.
+     * @param {GLenum} primtype - GLenum specifying the type primitive to render.
+     */
     constructor(gl, verts, primtype) {
         var vertexBuffer;
         vertexBuffer = gl.createBuffer();
@@ -185,45 +183,50 @@ class Shape {
     }
 }
 
-function createSquare(gl) 
-{
+function createSquare(gl) {
     let verts = [
-        .5,  .5,  0.0,
-        -.5,  .5,  0.0,
-        .5, -.5,  0.0,
-        -.5, -.5,  0.0
+        0.5,  0.5,  0.0,
+        -0.5,  0.5,  0.0,
+        0.5, -0.5,  0.0,
+        -0.5, -0.5,  0.0
     ];
 
-    let square = new Shape(gl, verts, gl.TRIANGLE_STRIP)
+    let square = new Shape(gl, verts, gl.TRIANGLE_STRIP);
     return square;
 }
 
-function createTriangle(gl)
-{
+function createTriangle(gl) {
     let verts = [
         0.0, 0.5, 0.0,
-        .5, -.5,  0.0,
-        -.5, -.5,  0.0
+        0.5, -0.5,  0.0,
+        -0.5, -0.5,  0.0
     ];
 
-    let triangle = new Shape(gl, verts, gl.TRIANGLES)
+    let triangle = new Shape(gl, verts, gl.TRIANGLES);
     return triangle;
 }
 
-function createRhombus(gl)
-{
+function createRhombus(gl) {
     var verts = [
-        0.5,  0,  0.0,
-        0,  .5,  0.0,
-        0, -.5,  0.0,
-        -0.5, 0,  0.0
+        0.5,  0.0,  0.0,
+        0.0,  0.5,  0.0,
+        0.0, -0.5,  0.0,
+        -0.5, 0.0,  0.0
     ];
-    let rhombus = new Shape(gl, verts, gl.TRIANGLE_STRIP)
+    let rhombus = new Shape(gl, verts, gl.TRIANGLE_STRIP);
     return rhombus;
 }
 
-function createSphere(gl, radius)
-{
-    var sphere = {};
+function createSphere(gl, radius) {
+    // https://stackoverflow.com/questions/45275273/webgl-not-rendering-my-circle for guidance
+    let vertices = [0.0, 0.0, 0.0];
+    for(let i = 40; i <= 320; i+=1){
+        let angle_in_radians = i*Math.PI/180;
+        let vert = [radius*Math.cos(angle_in_radians), radius*Math.sin(angle_in_radians), 0.0];
+        vertices.push(...vert);
+    }
+
+    // TRIANGLE_FAN makes vertices share one central vertex.
+    let sphere = new Shape(gl, vertices, gl.TRIANGLE_FAN);
     return sphere;
 }        
