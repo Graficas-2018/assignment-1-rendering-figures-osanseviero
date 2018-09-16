@@ -7,9 +7,11 @@ Assignment No 1 for the computer graphics course. Modify previous code examples 
 
 Rubric:
 
-1. Functions for each of the figures were included.
-2. Vertex data was created, and the correct information for each object was added.
-3. Correct transformations were performed for each figure.
-4. The figures were rendered as in the Figure.
+1. Functions for each of the figures were included. *Complete*
+2. Vertex data was created, and the correct information for each object was added. *Complete*
+3. Correct transformations were performed for each figure. *Complete*
+4. The figures were rendered as in the Figure. *Complete*
+
+**Grade: 105**
 
 *Add a symbolic link or a shortcut to the libs library to get the assignment to work.*
